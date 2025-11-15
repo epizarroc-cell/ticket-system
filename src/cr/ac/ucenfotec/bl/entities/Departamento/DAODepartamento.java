@@ -31,7 +31,7 @@ public class DAODepartamento {
             sb.append("ID: ").append(rs.getInt("id")).append(" | ");
             sb.append("Nombre: ").append(rs.getString("nombre")).append(" | ");
             sb.append("Descripcion: ").append(rs.getString("descripcion")).append(" | ");
-            sb.append("Contacto: ").append(rs.getString("contacto")).append("\n");
+            sb.append("Contacto: ").append(rs.getString("extension")).append("\n");
         }
         if (sb.isEmpty()) {
             sb.append("No hay departamentos registrados.\n");
