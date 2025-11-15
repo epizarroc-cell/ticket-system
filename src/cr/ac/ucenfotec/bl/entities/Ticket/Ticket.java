@@ -1,4 +1,7 @@
-package modelo;
+package cr.ac.ucenfotec.bl.entities.Ticket;
+import cr.ac.ucenfotec.bl.entities.Departamento.Departamento;
+import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
+
 import java.time.LocalDateTime;
 public class Ticket {
 

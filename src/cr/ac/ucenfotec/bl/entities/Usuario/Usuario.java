@@ -1,4 +1,4 @@
-package modelo;
+package cr.ac.ucenfotec.bl.entities.Usuario;
 
 public class Usuario {
 
