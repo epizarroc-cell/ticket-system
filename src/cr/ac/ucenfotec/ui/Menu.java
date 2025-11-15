@@ -1,5 +1,6 @@
 package cr.ac.ucenfotec.ui;
 import cr.ac.ucenfotec.bl.logic.GestorUsuario;
+import cr.ac.ucenfotec.bl.logic.GestorDepartamento;
 import cr.ac.ucenfotec.tl.Controller;
 
 import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
@@ -12,10 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
-    private static List<Usuario> usuarios = new ArrayList<>();
-    private static List<Departamento> departamentos = new ArrayList<>();
-    private static List<Ticket> tickets = new ArrayList<>();
-    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));;
+
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     public static void mostrarMenu() throws Exception {
         byte opcion = -1;
@@ -88,6 +87,80 @@ public class Menu {
 
     }
 
+
+    public static void registrarDepartamento() throws Exception {
+        boolean ok = false;
+        try {
+            do {
+                System.out.println("\n--- REGISTRAR DEPARTAMENTO ---");
+                System.out.print("Nombre del departamento: ");
+                String nombre = reader.readLine();
+
+                System.out.print("Descripción breve: ");
+                String descripcion = reader.readLine();
+
+                System.out.print("Correo o extensión (opcional): ");
+                String contacto = reader.readLine();
+
+                if (datosCompletos(nombre, descripcion)) {
+                    ok = true;
+                    System.out.println(GestorDepartamento.agregarDepartamento(nombre, descripcion, contacto));
+                } else {
+                    System.out.println("Faltan datos obligatorios. Intente de nuevo.");
+                }
+            } while (!ok);
+        } catch (IOException e) {
+            System.out.println("Error al leer la entrada: " + e.getMessage());
+        }
+    }
+
+//    public static void registrarTicket() throws Exception {
+//        boolean ok = false;
+//        try {
+//            do {
+//                System.out.println("\n--- REGISTRAR TICKET ---");
+//                System.out.print("Asunto: ");
+//                String asunto = reader.readLine();
+//
+//                System.out.print("Descripción: ");
+//                String descripcion = reader.readLine();
+//
+//                System.out.print("Correo del usuario que reporta: ");
+//                String correo = reader.readLine();
+//
+//                System.out.print("Departamento asociado (nombre): ");
+//                String departamento = reader.readLine();
+//
+//                // Estado inicial "nuevo"
+//                String estado = "nuevo";
+//
+//                if (datosCompletos(asunto, descripcion, correo, departamento)) {
+//                    ok = true;
+//                    System.out.println(GestorTicket.agregarTicket(asunto, descripcion, estado, correo, departamento));
+//                } else {
+//                    System.out.println("Faltan datos obligatorios. Intente de nuevo.");
+//                }
+//            } while (!ok);
+//        } catch (IOException e) {
+//            System.out.println("Error al leer la entrada: " + e.getMessage());
+//        }
+//    }
+
+//    public static void listarUsuarios() throws Exception {
+//        System.out.println("\n--- LISTA DE USUARIOS ---");
+//        System.out.println(cr.ac.ucenfotec.bl.logic.GestorUsuario.listarUsuarios());
+//    }
+
+    public static void listarDepartamentos() throws Exception {
+        System.out.println("\n--- LISTA DE DEPARTAMENTOS ---");
+        System.out.println(cr.ac.ucenfotec.bl.logic.GestorDepartamento.listarDepartamentos());
+    }
+
+//    public static void listarTickets() throws Exception {
+//        System.out.println("\n--- LISTA DE TICKETS ---");
+//        System.out.println(cr.ac.ucenfotec.bl.logic.GestorTicket.listarTickets());
+//    }
+
     public static boolean datosCompletos(String... datos) {
         for (String dato : datos) {
             if (dato == null || dato.trim().isEmpty()) {
@@ -96,139 +169,4 @@ public class Menu {
         }
         return true;
     }
-
-    private static void registrarDepartamento() {
-        try {
-            System.out.println("\n--- REGISTRAR DEPARTAMENTO ---");
-            System.out.print("Nombre: ");
-            String nombre = reader.readLine();
-
-            // Validar que no exista un departamento con el mismo nombre
-            for (Departamento dept : departamentos) {
-                if (dept.equals(new Departamento(nombre, "", ""))) {
-                    System.out.println("❌ Error: Ya existe un departamento con ese nombre");
-                    return;
-                }
-            }
-
-            System.out.print("Descripción: ");
-            String descripcion = reader.readLine();
-
-            System.out.print("Contacto (opcional): ");
-            String contacto = reader.readLine();
-
-            Departamento nuevoDepartamento = new Departamento(nombre, descripcion, contacto);
-            departamentos.add(nuevoDepartamento);
-            System.out.println("✅ Departamento registrado exitosamente");
-
-        } catch (IOException e) {
-            System.out.println("Error al leer la entrada: " + e.getMessage());
-        }
-    }
-
-    private static void registrarTicket() {
-        try {
-            System.out.println("\n--- REGISTRAR TICKET ---");
-
-            // Verificar que haya usuarios y departamentos registrados
-            if (usuarios.isEmpty()) {
-                System.out.println("❌ Error: No hay usuarios registrados. Registre uno primero.");
-                return;
-            }
-
-            if (departamentos.isEmpty()) {
-                System.out.println("❌ Error: No hay departamentos registrados. Registre uno primero.");
-                return;
-            }
-
-            // Seleccionar usuario
-            System.out.println("Usuarios disponibles:");
-            for (int i = 0; i < usuarios.size(); i++) {
-                System.out.println((i + 1) + ". " + usuarios.get(i).getNombreCompleto() + " (" + usuarios.get(i).getCorreoElectronico() + ")");
-            }
-
-            System.out.print("Seleccione el número del usuario: ");
-            String inputUsuario = reader.readLine();
-            int numeroUsuario = Integer.parseInt(inputUsuario);
-
-            if (numeroUsuario < 1 || numeroUsuario > usuarios.size()) {
-                System.out.println("❌ Error: Número de usuario inválido");
-                return;
-            }
-
-            Usuario usuarioSeleccionado = usuarios.get(numeroUsuario - 1);
-
-            // Seleccionar departamento
-            System.out.println("Departamentos disponibles:");
-            for (int i = 0; i < departamentos.size(); i++) {
-                System.out.println((i + 1) + ". " + departamentos.get(i).getNombre());
-            }
-
-            System.out.print("Seleccione el número del departamento: ");
-            String inputDept = reader.readLine();
-            int numeroDept = Integer.parseInt(inputDept);
-
-            if (numeroDept < 1 || numeroDept > departamentos.size()) {
-                System.out.println("❌ Error: Número de departamento inválido");
-                return;
-            }
-
-            Departamento departamentoSeleccionado = departamentos.get(numeroDept - 1);
-
-            System.out.print("Asunto del ticket: ");
-            String asunto = reader.readLine();
-
-            System.out.print("Descripción del problema: ");
-            String descripcion = reader.readLine();
-
-            Ticket nuevoTicket = new Ticket(asunto, descripcion, departamentoSeleccionado, usuarioSeleccionado);
-            tickets.add(nuevoTicket);
-
-            System.out.println("✅ Ticket registrado exitosamente:");
-            System.out.println(nuevoTicket);
-
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Por favor ingrese un número válido");
-        } catch (IOException e) {
-            System.out.println("Error al leer la entrada: " + e.getMessage());
-        }
-    }
-
-    private static void listarUsuarios() {
-        System.out.println("\n--- LISTA DE USUARIOS ---");
-        if (usuarios.isEmpty()) {
-            System.out.println("No hay usuarios registrados");
-        } else {
-            for (int i = 0; i < usuarios.size(); i++) {
-                System.out.println((i + 1) + ". " + usuarios.get(i));
-            }
-        }
-    }
-
-    private static void listarDepartamentos() {
-        System.out.println("\n--- LISTA DE DEPARTAMENTOS ---");
-        if (departamentos.isEmpty()) {
-            System.out.println("No hay departamentos registrados");
-        } else {
-            for (int i = 0; i < departamentos.size(); i++) {
-                System.out.println((i + 1) + ". " + departamentos.get(i));
-            }
-        }
-    }
-
-    private static void listarTickets() {
-        System.out.println("\n--- LISTA DE TICKETS ---");
-        if (tickets.isEmpty()) {
-            System.out.println("No hay tickets registrados");
-        } else {
-            for (Ticket ticket : tickets) {
-                System.out.println(ticket);
-            }
-        }
-    }
-
-    public static String leerTexto() throws IOException {
-        return reader.readLine();
-    }
-
 }
