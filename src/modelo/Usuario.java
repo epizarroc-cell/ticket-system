@@ -32,10 +32,6 @@ public class Usuario {
         return correoElectronico;
     }
 
-    public void setCorreoElectronico(String correo) {
-        correoElectronico = correo;
-    }
-
     public String getContrasena() {
         return contrasenaUsuario;
     }

@@ -6,7 +6,7 @@ public class Ticket {
     private static int contadorId = 1;
 
     private int id;
-    private String asusto;
+    private String asunto;
     private String descripcion;
     private String estado;
     private LocalDateTime fechaCracion;
@@ -17,9 +17,9 @@ public class Ticket {
     //COnstructor
 
     public Ticket(String asuntoObjeto, String descripcionObjeto, Departamento departamentoObjeto, Usuario usuarioObjeto){
+
         id = contadorId++;
-        asusto = asuntoObjeto;
-        descripcion = descripcionObjeto;
+        asunto = asuntoObjeto;
         estado = "Nuevo";
         fechaCracion = LocalDateTime.now();
         departamento = departamentoObjeto;
@@ -31,9 +31,7 @@ public class Ticket {
     public int getId(){
         return id;
     }
-    public String getAsusto(){
-        return asusto;
-    }
+    public String getAsunto(){ return asunto;}
     public String getDescripcion(){
         return  descripcion;
     }
@@ -50,7 +48,7 @@ public class Ticket {
 
     //Setter
     public void setAsusto(String nuevoAsunto){
-        asusto = nuevoAsunto;
+        asunto = nuevoAsunto;
     }
     public void setDescripcion(String nuevaDescipcion){
         descripcion = nuevaDescipcion;
@@ -66,7 +64,7 @@ public class Ticket {
     //ToString
     public String toString(){
         return "Ticket #" + id +
-                "\nAsunto: " + asusto +
+                "\nAsunto: " + asunto +
                 "\nEstando: " + estado +
                 "\nDepartamento: " + departamento.getNombre() +
                 "\nFecha: " + fechaCracion + ".\n";
