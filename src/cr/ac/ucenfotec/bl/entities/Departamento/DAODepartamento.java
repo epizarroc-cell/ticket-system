@@ -3,7 +3,6 @@ import cr.ac.ucenfotec.dl.Connector;
 import java.sql.ResultSet;
 
 public class DAODepartamento {
-
     public static String statement;
     public static String query;
 
@@ -18,9 +17,10 @@ public class DAODepartamento {
             }
         }
         statement = "INSERT INTO t_departamentos(nombre, descripcion, extension) VALUES ('" +
-                departamentoInsertar.getNombre() + "','" + departamentoInsertar.getDescripcion() + "','" + departamentoInsertar.getContacto() + "');";
+                departamentoInsertar.getNombre() + "','" + departamentoInsertar.getDescripcion() + "','" +
+                departamentoInsertar.getContacto() + "');";
         Connector.getBdConnection().ejecutarStatement(statement);
-        return "El departamento se registro en la base de datos correctamente.\n";
+        return "El departamento se registró en la base de datos correctamente.\n";
     }
 
     public static String obtenerTodos() throws Exception {
@@ -30,7 +30,7 @@ public class DAODepartamento {
         while (rs.next()) {
             sb.append("ID: ").append(rs.getInt("id")).append(" | ");
             sb.append("Nombre: ").append(rs.getString("nombre")).append(" | ");
-            sb.append("Descripcion: ").append(rs.getString("descripcion")).append(" | ");
+            sb.append("Descripción: ").append(rs.getString("descripcion")).append(" | ");
             sb.append("Contacto: ").append(rs.getString("extension")).append("\n");
         }
         if (sb.isEmpty()) {
@@ -39,5 +39,31 @@ public class DAODepartamento {
         return sb.toString();
     }
 
+    public static Departamento buscarPorNombre(String nombre) throws Exception {
+        query = "SELECT * FROM t_departamentos WHERE nombre = '" + nombre + "';";
+        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        if (rs.next()) {
+            return new Departamento(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("descripcion"),
+                    rs.getString("extension")
+            );
+        }
+        return null;
+    }
 
+    public static Departamento buscarPorId(int id) throws Exception {
+        query = "SELECT * FROM t_departamentos WHERE id = " + id + ";";
+        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        if (rs.next()) {
+            return new Departamento(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("descripcion"),
+                    rs.getString("extension")
+            );
+        }
+        return null;
+    }
 }

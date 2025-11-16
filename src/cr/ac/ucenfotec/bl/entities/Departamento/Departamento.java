@@ -1,47 +1,51 @@
 package cr.ac.ucenfotec.bl.entities.Departamento;
 
 public class Departamento {
-    //Atributo
+    private int id;
     private String nombre;
     private String descripcion;
     private String contacto;
 
-    //Metodo
-    //Constructor
-    public Departamento(String nombreObjeto, String descripcionObjeto,String contactoObjeto) {
+
+    // Constructor sin ID (para crear nuevos usuarios)
+    public Departamento(String nombreObjeto, String descripcionObjeto, String contactoObjeto) {
         nombre = nombreObjeto;
         descripcion = descripcionObjeto;
         contacto = contactoObjeto;
     }
-    //Getters
-    public String getNombre(){
-        return nombre;
-    }
-    public String getDescripcion(){
-        return descripcion;
-    }
-    public String getContacto(){
-        return contacto;
-    }
-    //Setters
-    public void setNombre(String nuevoNombre){
-        nombre = nuevoNombre;
-    }
-    public void setDescripcion(String nuevaDescripcion){
-        descripcion = nuevaDescripcion;
-    }
-    public void setContacto(String nuevoContacto){
-        contacto = nuevoContacto;
+    // Constructor con ID (para cuando se recupera de la BD)
+    public Departamento(int idObjeto, String nombreObjeto, String descripcionObjeto, String contactoObjeto) {
+        id = idObjeto;
+        nombre = nombreObjeto;
+        descripcion = descripcionObjeto;
+        contacto = contactoObjeto;
     }
 
-    //Metodo equals
-    public boolean equals(Departamento departamentoComparar){
-        return  nombre.equals(departamentoComparar.getNombre());
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int nuevaId) { id = nuevaId; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nuevoNombre) { nombre = nuevoNombre; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String nuevaDescripcion) { descripcion = nuevaDescripcion; }
+    public String getContacto() { return contacto; }
+    public void setContacto(String nuevoContacto) { contacto = nuevoContacto; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Departamento that = (Departamento) obj;
+        return nombre.equals(that.nombre);
     }
-    //Metodo toString
-    public String toString(){
-        return "Departamento: " + nombre +
-                "\nDescripcion: " + descripcion +
-                "\nContacto: " + contacto + ".\n";
+
+    @Override
+    public String toString() {
+        return "Departamento{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", contacto='" + contacto + '\'' +
+                '}';
     }
 }
