@@ -1,5 +1,7 @@
 package cr.ac.ucenfotec.bl.entities.Usuario;
 import cr.ac.ucenfotec.dl.Connector;
+import cr.ac.ucenfotec.utils.Utils;
+
 import java.sql.ResultSet;
 
 public class DAOUsuario {
@@ -17,9 +19,11 @@ public class DAOUsuario {
             }
         }
 
+        String saltedHash = Utils.hashPassword(usuarioInsertar.getContrasena());
+
         statement = "INSERT INTO t_usuarios(nombre, correo, contrasena, telefono, rol) VALUES ('" +
                 usuarioInsertar.getNombreCompleto() + "','" + usuarioInsertar.getCorreoElectronico() + "','" +
-                usuarioInsertar.getContrasena() + "','" + usuarioInsertar.getTelefonoContacto() + "','" +
+                saltedHash + "','" + usuarioInsertar.getTelefonoContacto() + "','" +
                 usuarioInsertar.getRol() + "');";
         Connector.getBdConnection().ejecutarStatement(statement);
         return "El usuario se registró en la base de datos correctamente.\n";

@@ -14,16 +14,16 @@ public class Controller {
                 Menu.registrarDepartamento();
                 break;
             case 3:
-//                Menu.registrarTicket();
+                Menu.registrarTicket();
                 break;
             case 4:
-//                Menu.listarUsuarios();
+                Menu.listarUsuarios();
                 break;
             case 5:
                 Menu.listarDepartamentos();
                 break;
             case 6:
-//                Menu.listarTickets();
+                Menu.listarTickets();
                 break;
             case 7:
                 System.out.println("¡Hasta luego!");

@@ -6,6 +6,8 @@ import cr.ac.ucenfotec.bl.entities.Ticket.Ticket;
 import cr.ac.ucenfotec.bl.entities.Analizador.AnalizadorBoW;
 import cr.ac.ucenfotec.bl.entities.Diccionario.DiccionarioTecnico;
 import cr.ac.ucenfotec.bl.entities.Diccionario.DiccionarioEmocional;
+import cr.ac.ucenfotec.tl.Controller;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -26,59 +28,25 @@ public class Menu {
     public static void mostrarMenu() throws Exception {
         byte opcion = -1;
         do {
-            System.out.println("\n=== Sistema de Tickets Universitario ===");
+
+            System.out.println("\n=== Sistema de tickete universitario ===");
             System.out.println("1. Registrar Usuario");
             System.out.println("2. Registrar Departamento");
             System.out.println("3. Registrar Ticket");
             System.out.println("4. Listar Usuarios");
             System.out.println("5. Listar Departamentos");
             System.out.println("6. Listar Tickets");
-            System.out.println("7. Gestión de Diccionarios BoW");
-            System.out.println("8. Análisis de Tickets (Bag of Words)");
-            System.out.println("9. Salir");
+            System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
             try{
                 opcion = Byte.parseByte(reader.readLine());
-            } catch (Exception e){
-                System.out.println("Lo sentimos, sucedió algo inesperado");
+            }catch (Exception e){
+                System.out.println("Lo sentimos, sucedio algo inesperado");
             }
-            procesarSeleccionMenu(opcion);
-        } while (opcion != 9);
+            Controller.procesarSeleccionMenu(opcion);
+        } while (opcion != 7);
     }
 
-    public static void procesarSeleccionMenu(Byte opcion) throws Exception {
-        switch (opcion) {
-            case 1:
-                registrarUsuario();
-                break;
-            case 2:
-                registrarDepartamento();
-                break;
-            case 3:
-                registrarTicket();
-                break;
-            case 4:
-                listarUsuarios();
-                break;
-            case 5:
-                listarDepartamentos();
-                break;
-            case 6:
-                listarTickets();
-                break;
-            case 7:
-                gestionarDiccionarios();
-                break;
-            case 8:
-                analizarTicketBoW();
-                break;
-            case 9:
-                System.out.println("¡Hasta luego!");
-                break;
-            default:
-                System.out.println("Opción inválida. Por favor ingrese un número válido");
-        }
-    }
 
     public static void registrarUsuario() throws Exception {
         boolean usuarioValido = false;
