@@ -1,31 +1,37 @@
 package cr.ac.ucenfotec.bl.entities.Departamento;
+
 import cr.ac.ucenfotec.dl.Connector;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class DAODepartamento {
-    public static String statement;
-    public static String query;
 
     public static String insertarDepartamento(Departamento departamentoInsertar) throws Exception {
         // Verificar unicidad por nombre
-        query = "SELECT COUNT(*) AS total FROM t_departamentos WHERE nombre = '" + departamentoInsertar.getNombre() + "';";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String checkQuery = "SELECT COUNT(*) AS total FROM t_departamentos WHERE nombre = ?";
+        PreparedStatement checkStmt = Connector.getBdConnection().prepararStatement(checkQuery);
+        checkStmt.setString(1, departamentoInsertar.getNombre());
+        ResultSet rs = checkStmt.executeQuery();
+
         if (rs.next()) {
             int total = rs.getInt("total");
             if (total > 0) {
                 return "Error: Ya existe un departamento con ese nombre.\n";
             }
         }
-        statement = "INSERT INTO t_departamentos(nombre, descripcion, extension) VALUES ('" +
-                departamentoInsertar.getNombre() + "','" + departamentoInsertar.getDescripcion() + "','" +
-                departamentoInsertar.getContacto() + "');";
-        Connector.getBdConnection().ejecutarStatement(statement);
+
+        String insertQuery = "INSERT INTO t_departamentos(nombre, descripcion, extension) VALUES (?, ?, ?)";
+        PreparedStatement insertStmt = Connector.getBdConnection().prepararStatement(insertQuery);
+        insertStmt.setString(1, departamentoInsertar.getNombre());
+        insertStmt.setString(2, departamentoInsertar.getDescripcion());
+        insertStmt.setString(3, departamentoInsertar.getContacto());
+
+        insertStmt.executeUpdate();
         return "El departamento se registró en la base de datos correctamente.\n";
     }
 
     public static String obtenerTodos() throws Exception {
         StringBuilder sb = new StringBuilder();
-        query = "SELECT * FROM t_departamentos;";
+        String query = "SELECT * FROM t_departamentos;";
         ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
         while (rs.next()) {
             sb.append("ID: ").append(rs.getInt("id")).append(" | ");
@@ -40,8 +46,11 @@ public class DAODepartamento {
     }
 
     public static Departamento buscarPorNombre(String nombre) throws Exception {
-        query = "SELECT * FROM t_departamentos WHERE nombre = '" + nombre + "';";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String query = "SELECT * FROM t_departamentos WHERE nombre = ?";
+        PreparedStatement stmt = Connector.getBdConnection().prepararStatement(query);
+        stmt.setString(1, nombre);
+        ResultSet rs = stmt.executeQuery();
+
         if (rs.next()) {
             return new Departamento(
                     rs.getInt("id"),
@@ -54,8 +63,11 @@ public class DAODepartamento {
     }
 
     public static Departamento buscarPorId(int id) throws Exception {
-        query = "SELECT * FROM t_departamentos WHERE id = " + id + ";";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String query = "SELECT * FROM t_departamentos WHERE id = ?";
+        PreparedStatement stmt = Connector.getBdConnection().prepararStatement(query);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
         if (rs.next()) {
             return new Departamento(
                     rs.getInt("id"),

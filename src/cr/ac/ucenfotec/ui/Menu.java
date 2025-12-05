@@ -1,4 +1,5 @@
 package cr.ac.ucenfotec.ui;
+import cr.ac.ucenfotec.bl.entities.Ticket.DAOTicket;
 import cr.ac.ucenfotec.bl.logic.*;
 import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
 import cr.ac.ucenfotec.bl.entities.Departamento.Departamento;
@@ -19,16 +20,17 @@ public class Menu {
     private static AnalizadorBoW analizadorBoW;
 
     static {
-        // Inicializar analizador BoW
-        DiccionarioTecnico dicTecnico = new DiccionarioTecnico();
-        DiccionarioEmocional dicEmocional = new DiccionarioEmocional();
-        analizadorBoW = new AnalizadorBoW(dicTecnico, dicEmocional);
+        try {
+            analizadorBoW = new AnalizadorBoW();
+        } catch (Exception e) {
+            System.out.println("Error al cargar diccionarios: " + e.getMessage());
+            analizadorBoW = null;
+        }
     }
 
     public static void mostrarMenu() throws Exception {
         byte opcion = -1;
         do {
-
             System.out.println("\n=== Sistema de tickete universitario ===");
             System.out.println("1. Registrar Usuario");
             System.out.println("2. Registrar Departamento");
@@ -36,7 +38,10 @@ public class Menu {
             System.out.println("4. Listar Usuarios");
             System.out.println("5. Listar Departamentos");
             System.out.println("6. Listar Tickets");
-            System.out.println("7. Salir");
+            System.out.println("7. Gestionar Diccionarios BoW");
+            System.out.println("8. Analizar Ticket (BoW)");
+            System.out.println("9. Cambiar estado de Ticket");
+            System.out.println("10. Salir");
             System.out.print("Seleccione una opción: ");
             try{
                 opcion = Byte.parseByte(reader.readLine());
@@ -44,7 +49,7 @@ public class Menu {
                 System.out.println("Lo sentimos, sucedio algo inesperado");
             }
             Controller.procesarSeleccionMenu(opcion);
-        } while (opcion != 7);
+        } while (opcion != 10);
     }
 
 
@@ -169,67 +174,155 @@ public class Menu {
         System.out.println(GestorTicket.listarTickets());
     }
 
+    public static void cambiarEstadoTicket() throws Exception {
+        System.out.println("\n--- CAMBIAR ESTADO DE TICKET ---");
+
+        // Listar tickets
+        System.out.println("Tickets registrados:");
+        System.out.println(GestorTicket.listarTickets());
+
+        System.out.print("Ingrese el ID del ticket: ");
+        try {
+            int ticketId = Integer.parseInt(reader.readLine());
+
+            System.out.print("Nuevo estado (Nuevo/En progreso/Resuelto): ");
+            String nuevoEstado = reader.readLine();
+
+            // Validar estado
+            if (!nuevoEstado.equalsIgnoreCase("Nuevo") &&
+                    !nuevoEstado.equalsIgnoreCase("En progreso") &&
+                    !nuevoEstado.equalsIgnoreCase("Resuelto")) {
+                System.out.println("Error: Estado no válido. Use: Nuevo, En progreso o Resuelto");
+                return;
+            }
+
+            // Cambiar estado
+            System.out.println(DAOTicket.cambiarEstado(ticketId, nuevoEstado));
+
+        } catch (NumberFormatException e) {
+            System.out.println("Error: ID debe ser un número válido.");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
     public static void gestionarDiccionarios() throws Exception {
         byte opcion = -1;
         do {
-            System.out.println("\n--- GESTIÓN DE DICCIONARIOS BOW ---");
-            System.out.println("1. Agregar palabra técnica");
-            System.out.println("2. Buscar palabra técnica");
-            System.out.println("3. Listar palabras técnicas");
-            System.out.println("4. Agregar palabra emocional");
-            System.out.println("5. Buscar palabra emocional");
-            System.out.println("6. Listar palabras emocionales");
-            System.out.println("7. Estadísticas de diccionarios");
-            System.out.println("8. Volver al menú principal");
+            System.out.println("\n=== GESTIÓN DE DICCIONARIOS BOW ===");
+            System.out.println("┌─ DICCIONARIO TÉCNICO ");
+            System.out.println("│ 1.  Agregar palabra técnica");
+            System.out.println("│ 2.  Buscar palabra técnica");
+            System.out.println("│ 3.  Listar palabras técnicas");
+            System.out.println("│ 4.  Actualizar palabra técnica");
+            System.out.println("│ 5.  Eliminar palabra técnica");
+            System.out.println("├─ DICCIONARIO EMOCIONAL ");
+            System.out.println("│ 6.  Agregar palabra emocional");
+            System.out.println("│ 7.  Buscar palabra emocional");
+            System.out.println("│ 8.  Listar palabras emocionales");
+            System.out.println("│ 9.  Actualizar palabra emocional");
+            System.out.println("│ 10. Eliminar palabra emocional");
+            System.out.println("├─ ESTADÍSTICAS ");
+            System.out.println("│ 11. Estadísticas de diccionarios");
+            System.out.println("└─ SALIR ");
+            System.out.println("│ 12. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
 
             try {
                 opcion = Byte.parseByte(reader.readLine());
 
                 switch (opcion) {
-                    case 1:
+                    case 1: // Agregar palabra técnica
                         System.out.print("Palabra: ");
                         String palabraTec = reader.readLine();
                         System.out.print("Categoría: ");
                         String categoria = reader.readLine();
                         System.out.println(GestorDiccionario.agregarPalabraTecnica(palabraTec, categoria));
                         break;
-                    case 2:
+
+                    case 2: // Buscar palabra técnica
                         System.out.print("Palabra a buscar: ");
                         String palabraBuscarTec = reader.readLine();
                         System.out.println(GestorDiccionario.buscarPalabraTecnica(palabraBuscarTec));
                         break;
-                    case 3:
+
+                    case 3: // Listar palabras técnicas
                         System.out.println(GestorDiccionario.listarPalabrasTecnicas());
                         break;
-                    case 4:
+
+                    case 4: // Actualizar palabra técnica
+                        System.out.print("Palabra a actualizar: ");
+                        String palabraActualizarTec = reader.readLine();
+                        System.out.print("Nueva categoría: ");
+                        String nuevaCategoria = reader.readLine();
+                        System.out.println(GestorDiccionario.actualizarPalabraTecnica(palabraActualizarTec, nuevaCategoria));
+                        break;
+
+                    case 5: // Eliminar palabra técnica
+                        System.out.print("Palabra a eliminar: ");
+                        String palabraEliminarTec = reader.readLine();
+                        System.out.print("¿Está seguro que desea eliminar '" + palabraEliminarTec + "'? (s/n): ");
+                        String confirmacion = reader.readLine();
+                        if (confirmacion.equalsIgnoreCase("s")) {
+                            System.out.println(GestorDiccionario.eliminarPalabraTecnica(palabraEliminarTec));
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                        break;
+
+                    case 6: // Agregar palabra emocional
                         System.out.print("Palabra: ");
                         String palabraEmo = reader.readLine();
                         System.out.print("Emoción: ");
                         String emocion = reader.readLine();
                         System.out.println(GestorDiccionario.agregarPalabraEmocional(palabraEmo, emocion));
                         break;
-                    case 5:
+
+                    case 7: // Buscar palabra emocional
                         System.out.print("Palabra a buscar: ");
                         String palabraBuscarEmo = reader.readLine();
                         System.out.println(GestorDiccionario.buscarPalabraEmocional(palabraBuscarEmo));
                         break;
-                    case 6:
+
+                    case 8: // Listar palabras emocionales
                         System.out.println(GestorDiccionario.listarPalabrasEmocionales());
                         break;
-                    case 7:
+
+                    case 9: // Actualizar palabra emocional
+                        System.out.print("Palabra a actualizar: ");
+                        String palabraActualizarEmo = reader.readLine();
+                        System.out.print("Nueva emoción: ");
+                        String nuevaEmocion = reader.readLine();
+                        System.out.println(GestorDiccionario.actualizarPalabraEmocional(palabraActualizarEmo, nuevaEmocion));
+                        break;
+
+                    case 10: // Eliminar palabra emocional
+                        System.out.print("Palabra a eliminar: ");
+                        String palabraEliminarEmo = reader.readLine();
+                        System.out.print("¿Está seguro que desea eliminar '" + palabraEliminarEmo + "'? (s/n): ");
+                        String confirmacion2 = reader.readLine();
+                        if (confirmacion2.equalsIgnoreCase("s")) {
+                            System.out.println(GestorDiccionario.eliminarPalabraEmocional(palabraEliminarEmo));
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                        break;
+
+                    case 11: // Estadísticas
                         System.out.println(GestorDiccionario.obtenerEstadisticas());
                         break;
-                    case 8:
+
+                    case 12: // Volver
                         System.out.println("Volviendo al menú principal...");
                         break;
+
                     default:
                         System.out.println("Opción inválida");
                 }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
-        } while (opcion != 8);
+        } while (opcion != 12);
     }
 
     public static void analizarTicketBoW() throws Exception {
@@ -249,7 +342,7 @@ public class Menu {
                 return;
             }
 
-            System.out.println("\n🎫 Ticket seleccionado:");
+            System.out.println("\n Ticket seleccionado:");
             System.out.println("Asunto: " + ticket.getAsunto());
             System.out.println("Descripción: " + ticket.getDescripcion());
 
@@ -257,9 +350,9 @@ public class Menu {
             AnalizadorBoW.ResultadoAnalisis resultado = analizadorBoW.analizarTicket(ticket);
 
             // Mostrar resultados
-            System.out.println("\n📊 RESULTADOS DEL ANÁLISIS:");
+            System.out.println("\n RESULTADOS DEL ANÁLISIS:");
 
-            System.out.println("\n😊 DETECCIÓN DE EMOCIONES:");
+            System.out.println("\n DETECCIÓN DE EMOCIONES:");
             if (resultado.getEmociones().isEmpty()) {
                 System.out.println("No se detectaron emociones específicas");
             } else {

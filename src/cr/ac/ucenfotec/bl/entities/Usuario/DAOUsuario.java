@@ -1,17 +1,18 @@
 package cr.ac.ucenfotec.bl.entities.Usuario;
+
 import cr.ac.ucenfotec.dl.Connector;
 import cr.ac.ucenfotec.utils.Utils;
-
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class DAOUsuario {
-    public static String query;
-    public static String statement;
 
     public static String insertarUsuario(Usuario usuarioInsertar) throws Exception {
         // Verificar unicidad por correo
-        query = "SELECT COUNT(*) AS total FROM t_usuarios WHERE correo = '" + usuarioInsertar.getCorreoElectronico() + "';";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String checkQuery = "SELECT COUNT(*) AS total FROM t_usuarios WHERE correo = ?";
+        PreparedStatement checkStmt = Connector.getBdConnection().prepararStatement(checkQuery);
+        checkStmt.setString(1, usuarioInsertar.getCorreoElectronico());
+        ResultSet rs = checkStmt.executeQuery();
+
         if (rs.next()) {
             int total = rs.getInt("total");
             if (total > 0) {
@@ -21,17 +22,21 @@ public class DAOUsuario {
 
         String saltedHash = Utils.hashPassword(usuarioInsertar.getContrasena());
 
-        statement = "INSERT INTO t_usuarios(nombre, correo, contrasena, telefono, rol) VALUES ('" +
-                usuarioInsertar.getNombreCompleto() + "','" + usuarioInsertar.getCorreoElectronico() + "','" +
-                saltedHash + "','" + usuarioInsertar.getTelefonoContacto() + "','" +
-                usuarioInsertar.getRol() + "');";
-        Connector.getBdConnection().ejecutarStatement(statement);
+        String insertQuery = "INSERT INTO t_usuarios(nombre, correo, contrasena, telefono, rol) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement insertStmt = Connector.getBdConnection().prepararStatement(insertQuery);
+        insertStmt.setString(1, usuarioInsertar.getNombreCompleto());
+        insertStmt.setString(2, usuarioInsertar.getCorreoElectronico());
+        insertStmt.setString(3, saltedHash);
+        insertStmt.setString(4, usuarioInsertar.getTelefonoContacto());
+        insertStmt.setString(5, usuarioInsertar.getRol());
+
+        insertStmt.executeUpdate();
         return "El usuario se registró en la base de datos correctamente.\n";
     }
 
     public static String obtenerTodos() throws Exception {
         StringBuilder sb = new StringBuilder();
-        query = "SELECT * FROM t_usuarios;";
+        String query = "SELECT * FROM t_usuarios;";
         ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
         while (rs.next()) {
             sb.append("ID: ").append(rs.getInt("id")).append(" | ");
@@ -47,8 +52,11 @@ public class DAOUsuario {
     }
 
     public static Usuario buscarPorCorreo(String correo) throws Exception {
-        query = "SELECT * FROM t_usuarios WHERE correo = '" + correo + "';";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String query = "SELECT * FROM t_usuarios WHERE correo = ?";
+        PreparedStatement stmt = Connector.getBdConnection().prepararStatement(query);
+        stmt.setString(1, correo);
+        ResultSet rs = stmt.executeQuery();
+
         if (rs.next()) {
             return new Usuario(
                     rs.getInt("id"),
@@ -63,8 +71,11 @@ public class DAOUsuario {
     }
 
     public static Usuario buscarPorId(int id) throws Exception {
-        query = "SELECT * FROM t_usuarios WHERE id = " + id + ";";
-        ResultSet rs = Connector.getBdConnection().ejecutarQuery(query);
+        String query = "SELECT * FROM t_usuarios WHERE id = ?";
+        PreparedStatement stmt = Connector.getBdConnection().prepararStatement(query);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
         if (rs.next()) {
             return new Usuario(
                     rs.getInt("id"),

@@ -1,10 +1,9 @@
 package cr.ac.ucenfotec.tl;
-import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
+
 import cr.ac.ucenfotec.ui.Menu;
-
 import java.io.IOException;
-public class Controller {
 
+public class Controller {
     public static void procesarSeleccionMenu (Byte opcion) throws Exception{
         switch (opcion) {
             case 1:
@@ -26,7 +25,17 @@ public class Controller {
                 Menu.listarTickets();
                 break;
             case 7:
+                Menu.gestionarDiccionarios();
+                break;
+            case 8:
+                Menu.analizarTicketBoW();
+                break;
+            case 9:
+                Menu.cambiarEstadoTicket();
+                break;
+            case 10:
                 System.out.println("¡Hasta luego!");
+                System.exit(0);
                 break;
             default:
                 System.out.println("Opción inválida. Por favor ingrese un número válido");

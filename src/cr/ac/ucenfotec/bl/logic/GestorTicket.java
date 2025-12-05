@@ -1,4 +1,5 @@
 package cr.ac.ucenfotec.bl.logic;
+
 import cr.ac.ucenfotec.bl.entities.Ticket.*;
 import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
 import cr.ac.ucenfotec.bl.entities.Departamento.Departamento;
@@ -15,5 +16,9 @@ public class GestorTicket {
 
     public static Ticket buscarTicketPorId(int id) throws Exception {
         return DAOTicket.buscarPorId(id);
+    }
+
+    public static String cambiarEstadoTicket(int id, String nuevoEstado) throws Exception {
+        return DAOTicket.cambiarEstado(id, nuevoEstado);
     }
 }

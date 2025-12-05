@@ -23,4 +23,8 @@ public class DBAccess {
         return statement.executeQuery(query);
     }
 
+    public PreparedStatement prepararStatement(String sql) throws SQLException {
+        return connection.prepareStatement(sql);
+    }
+
 }
