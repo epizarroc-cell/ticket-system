@@ -1,6 +1,9 @@
 package cr.ac.ucenfotec.bl.logic;
 import cr.ac.ucenfotec.bl.entities.Departamento.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GestorDepartamento {
     public static String agregarDepartamento(String nombre, String descripcion, String contacto) throws Exception {
         Departamento d = new Departamento(nombre, descripcion, contacto);
@@ -17,5 +20,9 @@ public class GestorDepartamento {
 
     public static Departamento buscarDepartamentoPorId(int id) throws Exception {
         return DAODepartamento.buscarPorId(id);
+    }
+    public static List<Departamento> getListaDepartamentos() throws Exception {
+        List<Departamento> departamentos = new ArrayList<>();
+        return departamentos;
     }
 }
