@@ -2,8 +2,13 @@ package cr.ac.ucenfotec.bl.entities.Departamento;
 
 import cr.ac.ucenfotec.dl.Connector;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DAODepartamento {
+
+    public static String statement;
+    public static String query;
 
     public static String insertarDepartamento(Departamento departamentoInsertar) throws Exception {
         // Verificar unicidad por nombre
@@ -27,6 +32,24 @@ public class DAODepartamento {
 
         insertStmt.executeUpdate();
         return "El departamento se registró en la base de datos correctamente.\n";
+    }
+
+    public static List<Departamento> obtenerListaDepartamentos() throws Exception {
+        List<Departamento> departamentos = new ArrayList<>();
+        String query = "SELECT * FROM t_departamentos ORDER BY nombre";
+
+        try (ResultSet rs = Connector.getBdConnection().ejecutarQuery(query)) {
+            while (rs.next()) {
+                Departamento dept = new Departamento(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getString("extension")
+                );
+                departamentos.add(dept);
+            }
+        }
+        return departamentos;
     }
 
     public static String obtenerTodos() throws Exception {

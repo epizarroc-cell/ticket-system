@@ -95,6 +95,8 @@ public class AnalizadorBoW {
         return vector;
     }
 
+
+
     public ResultadoAnalisis analizarTicket(Ticket ticket) {
         String descripcion = ticket.getDescripcion();
         String textoPreprocesado = preprocesarTexto(descripcion);

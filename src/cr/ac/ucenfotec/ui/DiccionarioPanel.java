@@ -5,6 +5,8 @@ import cr.ac.ucenfotec.bl.logic.GestorDiccionario;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
+
 
 public class DiccionarioPanel extends JPanel {
     private JTabbedPane tabbedPane;
@@ -158,35 +160,73 @@ public class DiccionarioPanel extends JPanel {
         return panel;
     }
 
+//    private void cargarDiccionarios() {
+//        try {
+//            // Cargar palabras técnicas
+//            modelTecnico.setRowCount(0);
+//            String listaTecnica = GestorDiccionario.listarPalabrasTecnicas();
+//            String[] lineas = listaTecnica.split("\n");
+//            for (String linea : lineas) {
+//                if (linea.contains(":")) {
+//                    String[] partes = linea.split(":");
+//                    if (partes.length >= 2) {
+//                        modelTecnico.addRow(new String[]{partes[0].trim(), partes[1].trim()});
+//                    }
+//                }
+//            }
+//
+//            // Cargar palabras emocionales
+//            modelEmocional.setRowCount(0);
+//            String listaEmocional = GestorDiccionario.listarPalabrasEmocionales();
+//            lineas = listaEmocional.split("\n");
+//            for (String linea : lineas) {
+//                if (linea.contains(":")) {
+//                    String[] partes = linea.split(":");
+//                    if (partes.length >= 2) {
+//                        modelEmocional.addRow(new String[]{partes[0].trim(), partes[1].trim()});
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "Error al cargar diccionarios: " + e.getMessage());
+//        }
+//    }
+
     private void cargarDiccionarios() {
         try {
-            // Cargar palabras técnicas
+
             modelTecnico.setRowCount(0);
-            String listaTecnica = GestorDiccionario.listarPalabrasTecnicas();
-            String[] lineas = listaTecnica.split("\n");
-            for (String linea : lineas) {
-                if (linea.contains(":")) {
-                    String[] partes = linea.split(":");
-                    if (partes.length >= 2) {
-                        modelTecnico.addRow(new String[]{partes[0].trim(), partes[1].trim()});
-                    }
+            List<String[]> palabrasTecnicas = GestorDiccionario.listarPalabrasTecnicasUI();
+
+            if (palabrasTecnicas.isEmpty()) {
+                // Agregar una fila indicando que no hay datos
+                modelTecnico.addRow(new String[]{"No hay palabras técnicas", ""});
+            } else {
+                for (String[] palabra : palabrasTecnicas) {
+                    modelTecnico.addRow(palabra);
                 }
             }
 
-            // Cargar palabras emocionales
+
             modelEmocional.setRowCount(0);
-            String listaEmocional = GestorDiccionario.listarPalabrasEmocionales();
-            lineas = listaEmocional.split("\n");
-            for (String linea : lineas) {
-                if (linea.contains(":")) {
-                    String[] partes = linea.split(":");
-                    if (partes.length >= 2) {
-                        modelEmocional.addRow(new String[]{partes[0].trim(), partes[1].trim()});
-                    }
+            List<String[]> palabrasEmocionales = GestorDiccionario.listarPalabrasEmocionalesUI();
+
+            if (palabrasEmocionales.isEmpty()) {
+                // Agregar una fila indicando que no hay datos
+                modelEmocional.addRow(new String[]{"No hay palabras emocionales", ""});
+            } else {
+                for (String[] palabra : palabrasEmocionales) {
+                    modelEmocional.addRow(palabra);
                 }
             }
+
+
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar diccionarios: " + e.getMessage());
+            JOptionPane.showMessageDialog(this,
+                    "Error al cargar diccionarios: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

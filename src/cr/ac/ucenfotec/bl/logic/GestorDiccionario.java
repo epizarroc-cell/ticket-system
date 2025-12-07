@@ -2,6 +2,9 @@ package cr.ac.ucenfotec.bl.logic;
 
 import cr.ac.ucenfotec.bl.entities.Diccionario.DAODiccionarioTecnico;
 import cr.ac.ucenfotec.bl.entities.Diccionario.DAODiccionarioEmocional;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class GestorDiccionario {
@@ -54,6 +57,17 @@ public class GestorDiccionario {
         return sb.toString();
     }
 
+    public static List<String[]> listarPalabrasTecnicasUI() throws Exception {
+        Map<String, String> palabras = DAODiccionarioTecnico.obtenerTodas();
+        List<String[]> resultado = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : palabras.entrySet()) {
+            resultado.add(new String[]{entry.getKey(), entry.getValue()});
+        }
+
+        return resultado;
+    }
+
     // Métodos para diccionario emocional
     public static String agregarPalabraEmocional(String palabra, String emocion) throws Exception {
         boolean exito = DAODiccionarioEmocional.agregarPalabra(palabra, emocion);
@@ -100,6 +114,17 @@ public class GestorDiccionario {
             i++;
         }
         return sb.toString();
+    }
+
+    public static List<String[]> listarPalabrasEmocionalesUI() throws Exception {
+        Map<String, String> palabras = DAODiccionarioEmocional.obtenerTodas();
+        List<String[]> resultado = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : palabras.entrySet()) {
+            resultado.add(new String[]{entry.getKey(), entry.getValue()});
+        }
+
+        return resultado;
     }
 
     public static String obtenerEstadisticas() throws Exception {

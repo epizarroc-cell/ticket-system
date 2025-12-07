@@ -1,14 +1,17 @@
 package cr.ac.ucenfotec.ui;
 
+import cr.ac.ucenfotec.bl.entities.Analizador.AnalizadorBoW;
 import cr.ac.ucenfotec.bl.logic.GestorTicket;
 import cr.ac.ucenfotec.bl.entities.Ticket.Ticket;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class AnalisisPanel extends JPanel {
     private JTextArea txtResultado;
     private JComboBox<Ticket> cmbTickets;
+    private AnalizadorBoW analizadorBoW;
 
     public AnalisisPanel() {
         initComponents();
@@ -43,6 +46,15 @@ public class AnalisisPanel extends JPanel {
             }
         });
         topPanel.add(cmbTickets, gbc);
+
+        try {
+            analizadorBoW = new AnalizadorBoW();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al inicializar el AnalizadorBoW: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
         gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0;
         JButton btnAnalizar = new JButton("Analizar");
@@ -91,20 +103,73 @@ public class AnalisisPanel extends JPanel {
             txtResultado.setText("=== ANÁLISIS BAG OF WORDS ===\n\n");
             txtResultado.append("Ticket #" + ticket.getId() + ": " + ticket.getAsunto() + "\n");
             txtResultado.append("Fecha: " + ticket.getFechaCreacion() + "\n");
-            txtResultado.append("Usuario: " + ticket.getUsuario().getNombreCompleto() + "\n");  // CORREGIDO
+            txtResultado.append("Usuario: " + ticket.getUsuario().getNombreCompleto() + "\n");
             txtResultado.append("Departamento: " + ticket.getDepartamento().getNombre() + "\n\n");
 
             txtResultado.append("=== DESCRIPCIÓN ORIGINAL ===\n");
             txtResultado.append(ticket.getDescripcion() + "\n\n");
 
-            // Aquí integrarías el AnalizadorBoW real
-            txtResultado.append("=== RESULTADOS DEL ANÁLISIS ===\n");
-            txtResultado.append("Esta funcionalidad requiere la implementación completa del AnalizadorBoW\n");
-            txtResultado.append("Se analizarían:\n");
-            txtResultado.append("1. Frecuencia de palabras\n");
-            txtResultado.append("2. Detección de emociones\n");
-            txtResultado.append("3. Categorización técnica\n");
-            txtResultado.append("4. Palabras clave\n");
+            // Verificar si el analizador está inicializado
+            if (analizadorBoW == null) {
+                try {
+                    analizadorBoW = new AnalizadorBoW();
+                } catch (Exception e) {
+                    txtResultado.append("=== ERROR ===\n");
+                    txtResultado.append("No se pudo inicializar el AnalizadorBoW: " + e.getMessage() + "\n");
+                    return;
+                }
+            }
+
+            // Ejecutar análisis
+            AnalizadorBoW.ResultadoAnalisis resultado = analizadorBoW.analizarTicket(ticket);
+
+            txtResultado.append("=== RESULTADOS DEL ANÁLISIS ===\n\n");
+
+            // 1. DETECCIÓN DE EMOCIONES
+            txtResultado.append("DETECCIÓN DE EMOCIONES:\n");
+            if (resultado.getEmociones().isEmpty()) {
+                txtResultado.append("  • No se detectaron emociones específicas\n");
+            } else {
+                // Ordenar por puntos descendentes
+                resultado.getEmociones().entrySet().stream()
+                        .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                        .forEach(entry -> {
+                            txtResultado.append("  • " + entry.getKey() + ": " + entry.getValue() + " puntos\n");
+                        });
+                txtResultado.append("  Emoción principal: " + resultado.getEmocionPrincipal() + "\n");
+
+                List<String> palabrasEmocionales = resultado.getPalabrasEmocionales();
+                if (!palabrasEmocionales.isEmpty()) {
+                    txtResultado.append("  Palabras detonantes: " + String.join(", ", palabrasEmocionales) + "\n");
+                }
+            }
+            txtResultado.append("\n");
+
+            // 2. CLASIFICACIÓN TÉCNICA
+            txtResultado.append("CLASIFICACIÓN TÉCNICA:\n");
+            if (resultado.getCategorias().isEmpty()) {
+                txtResultado.append("  • No se pudo determinar una categoría técnica\n");
+            } else {
+                // Ordenar por puntos descendentes
+                resultado.getCategorias().entrySet().stream()
+                        .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                        .forEach(entry -> {
+                            txtResultado.append("  • " + entry.getKey() + ": " + entry.getValue() + " puntos\n");
+                        });
+                txtResultado.append("  Categoría sugerida: " + resultado.getCategoriaPrincipal() + "\n");
+
+                List<String> palabrasTecnicas = resultado.getPalabrasTecnicas();
+                if (!palabrasTecnicas.isEmpty()) {
+                    txtResultado.append("  Palabras clave: " + String.join(", ", palabrasTecnicas) + "\n");
+                }
+            }
+
+            // 3. RESUMEN DEL ANÁLISIS
+            txtResultado.append("\n=== RESUMEN DEL ANÁLISIS ===\n");
+            txtResultado.append("Total emociones detectadas: " + resultado.getEmociones().size() + "\n");
+            txtResultado.append("Total categorías técnicas: " + resultado.getCategorias().size() + "\n");
+            txtResultado.append("Total palabras analizadas: " +
+                    (resultado.getPalabrasEmocionales().size() + resultado.getPalabrasTecnicas().size()) + "\n");
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error en análisis: " + e.getMessage());

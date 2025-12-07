@@ -3,8 +3,6 @@ package cr.ac.ucenfotec.bl.logic;
 import cr.ac.ucenfotec.bl.entities.Ticket.*;
 import cr.ac.ucenfotec.bl.entities.Usuario.Usuario;
 import cr.ac.ucenfotec.bl.entities.Departamento.Departamento;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class GestorTicket {
@@ -25,8 +23,10 @@ public class GestorTicket {
         return DAOTicket.cambiarEstado(id, nuevoEstado);
     }
     public static List<Ticket> getListaTickets() throws Exception {
+        return DAOTicket.obtenerListaTickets();
+    }
 
-        List<Ticket> tickets = new ArrayList<>();
-        return tickets;
+    public static List<Ticket> getListaTicketsPorUsuario(int usuarioId) throws Exception {
+        return DAOTicket.obtenerListaTicketsPorUsuario(usuarioId);
     }
 }
